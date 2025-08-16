@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1048351012922",
+    "project_id": "moodthread-97785",
+    "storage_bucket": "moodthread-97785.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1048351012922:android:75a6180ff90bb968d55d03",
+        "android_client_info": {
+          "package_name": "com.example.moodthread"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDX09cSrBphLetUi0RBgY1kp9Hcvpy06NA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
