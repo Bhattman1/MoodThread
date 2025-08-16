@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:moodthread/services/auth_service.dart';
 import 'package:moodthread/screens/auth_screen.dart';
-import 'package:moodthread/screens/home_screen.dart';
+import 'package:moodthread/screens/main_navigation_screen.dart';
 import 'package:moodthread/utils/app_theme.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -58,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     
     if (authService.isAuthenticated) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
       );
     } else {
       Navigator.of(context).pushReplacement(
@@ -78,95 +78,102 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // App Logo/Icon
-            AnimatedBuilder(
-              animation: Listenable.merge([_fadeController, _scaleController]),
-              builder: (context, child) {
-                return Transform.scale(
-                  scale: _scaleAnimation.value,
-                  child: Opacity(
-                    opacity: _fadeAnimation.value,
-                    child: Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: AppTheme.primaryColor,
-                        borderRadius: BorderRadius.circular(30),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.primaryColor.withOpacity(0.3),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.06),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // App Logo/Icon
+                AnimatedBuilder(
+                  animation: Listenable.merge([_fadeController, _scaleController]),
+                  builder: (context, child) {
+                    return Transform.scale(
+                      scale: _scaleAnimation.value,
+                      child: Opacity(
+                        opacity: _fadeAnimation.value,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          height: MediaQuery.of(context).size.width * 0.3,
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryColor,
+                            borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.075),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppTheme.primaryColor.withOpacity(0.3),
+                                blurRadius: MediaQuery.of(context).size.width * 0.05,
+                                offset: Offset(0, MediaQuery.of(context).size.height * 0.01),
+                              ),
+                            ],
                           ),
-                        ],
+                          child: Icon(
+                            Icons.psychology,
+                            size: MediaQuery.of(context).size.width * 0.15,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.psychology,
-                        size: 60,
-                        color: Colors.white,
+                    );
+                  },
+                ),
+                
+                SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                
+                // App Name
+                AnimatedBuilder(
+                  animation: _fadeController,
+                  builder: (context, child) {
+                    return Opacity(
+                      opacity: _fadeAnimation.value,
+                      child: Text(
+                        'MoodThread',
+                        style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                          color: AppTheme.primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                    ),
-                  ),
-                );
-              },
+                    );
+                  },
+                ),
+                
+                SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+                
+                // Tagline
+                AnimatedBuilder(
+                  animation: _fadeController,
+                  builder: (context, child) {
+                    return Opacity(
+                      opacity: _fadeAnimation.value,
+                      child: Text(
+                        'BeReal for emotions',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: AppTheme.textSecondaryColor,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                  },
+                ),
+                
+                SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+                
+                // Loading indicator
+                AnimatedBuilder(
+                  animation: _fadeController,
+                  builder: (context, child) {
+                    return Opacity(
+                      opacity: _fadeAnimation.value,
+                      child: const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
-            
-            const SizedBox(height: 40),
-            
-            // App Name
-            AnimatedBuilder(
-              animation: _fadeController,
-              builder: (context, child) {
-                return Opacity(
-                  opacity: _fadeAnimation.value,
-                  child: Text(
-                    'MoodThread',
-                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                      color: AppTheme.primaryColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                );
-              },
-            ),
-            
-            const SizedBox(height: 16),
-            
-            // Tagline
-            AnimatedBuilder(
-              animation: _fadeController,
-              builder: (context, child) {
-                return Opacity(
-                  opacity: _fadeAnimation.value,
-                  child: Text(
-                    'BeReal for emotions',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppTheme.textSecondaryColor,
-                    ),
-                  ),
-                );
-              },
-            ),
-            
-            const SizedBox(height: 60),
-            
-            // Loading indicator
-            AnimatedBuilder(
-              animation: _fadeController,
-              builder: (context, child) {
-                return Opacity(
-                  opacity: _fadeAnimation.value,
-                  child: const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
-                  ),
-                );
-              },
-            ),
-          ],
+          ),
         ),
       ),
     );

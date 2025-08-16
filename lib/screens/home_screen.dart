@@ -7,6 +7,7 @@ import 'package:moodthread/models/thread_response_model.dart';
 import 'package:moodthread/screens/thread_feed_screen.dart';
 import 'package:moodthread/utils/app_theme.dart';
 import 'package:intl/intl.dart';
+import 'dart:math';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,11 +22,25 @@ class _HomeScreenState extends State<HomeScreen> {
   ThreadResponseModel? _userResponse;
   bool _isLoading = true;
   bool _isSubmitting = false;
+  DateTime? _nextPromptTime;
 
   @override
   void initState() {
     super.initState();
     _loadTodayPrompt();
+    _calculateNextPromptTime();
+  }
+
+  void _calculateNextPromptTime() {
+    final now = DateTime.now();
+    final tomorrow = now.add(const Duration(days: 1));
+    
+    // Random time between 10 AM and 12 AM (midnight)
+    final random = Random();
+    final randomHour = 10 + random.nextInt(14); // 10 to 23 (10 AM to 11 PM)
+    final randomMinute = random.nextInt(60);
+    
+    _nextPromptTime = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, randomHour, randomMinute);
   }
 
   Future<void> _loadTodayPrompt() async {
@@ -103,14 +118,9 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
         title: const Text('MoodThread'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person_outline),
-            onPressed: () {
-              // TODO: Navigate to profile screen
-            },
-          ),
-        ],
+        backgroundColor: AppTheme.surfaceColor,
+        foregroundColor: AppTheme.textColor,
+        elevation: 0,
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -121,29 +131,44 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildNoPromptView() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.schedule,
-            size: 64,
-            color: AppTheme.textSecondaryColor,
+    return SafeArea(
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.06),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.08),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.1),
+                ),
+                child: Icon(
+                  Icons.schedule,
+                  size: MediaQuery.of(context).size.width * 0.15,
+                  color: AppTheme.primaryColor,
+                ),
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+              Text(
+                'No prompt available',
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+              Text(
+                'Check back later for today\'s prompt',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: AppTheme.textSecondaryColor,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          Text(
-            'No prompt available',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Check back later for today\'s prompt',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: AppTheme.textSecondaryColor,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -157,61 +182,114 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildPromptInputView() {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        children: [
-          const SizedBox(height: 40),
-          
-          // Prompt Card
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.psychology,
-                    size: 48,
-                    color: AppTheme.primaryColor,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Today\'s Prompt',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: AppTheme.textSecondaryColor,
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+        child: Column(
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            
+            // Beautiful Prompt Card
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppTheme.primaryColor.withOpacity(0.1),
+                    AppTheme.primaryColor.withOpacity(0.05),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: AppTheme.primaryColor.withOpacity(0.2),
+                  width: 1,
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.06),
+                child: Column(
+                  children: [
+                    // Prompt Icon
+                    Container(
+                      padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryColor.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.06),
+                      ),
+                      child: Icon(
+                        Icons.psychology,
+                        size: MediaQuery.of(context).size.width * 0.08,
+                        color: AppTheme.primaryColor,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    _todayPrompt!.text,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+                    
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                    
+                    // Prompt Label
+                    Text(
+                      'Today\'s Mood Check',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: AppTheme.primaryColor,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Share your response in one sentence',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.textSecondaryColor,
+                    
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                    
+                    // Prompt Text
+                    Container(
+                      padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        _todayPrompt!.text,
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          height: 1.3,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                    
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                    
+                    // Instruction
+                    Text(
+                      'Share your response in one sentence',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppTheme.textSecondaryColor,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          
-          const SizedBox(height: 40),
-          
-          // Response Input
-          _buildResponseInput(),
-          
-          const Spacer(),
-          
-          // Time Remaining
-          _buildTimeRemaining(),
-        ],
+            
+            SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+            
+            // Response Input Section
+            _buildResponseInput(),
+            
+            SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+            
+            // Time Remaining Card
+            _buildTimeRemaining(),
+            
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+          ],
+        ),
       ),
     );
   }
@@ -220,13 +298,38 @@ class _HomeScreenState extends State<HomeScreen> {
     final responseController = TextEditingController();
     
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Text(
+          'Your Response',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: AppTheme.textColor,
+          ),
+        ),
+        
+        SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+        
         TextFormField(
           controller: responseController,
-          decoration: const InputDecoration(
-            labelText: 'Your response',
-            hintText: 'How are you feeling today?',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: 'How are you feeling today?',
+            hintText: 'Share your mood in one sentence...',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: AppTheme.borderColor),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: AppTheme.borderColor),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),
+            ),
+            filled: true,
+            fillColor: Colors.white,
+            contentPadding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
           ),
           maxLines: 3,
           maxLength: 200,
@@ -238,10 +341,11 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
         
-        const SizedBox(height: 16),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.02),
         
         SizedBox(
           width: double.infinity,
+          height: MediaQuery.of(context).size.height * 0.06,
           child: ElevatedButton(
             onPressed: _isSubmitting
                 ? null
@@ -251,13 +355,30 @@ class _HomeScreenState extends State<HomeScreen> {
                       _submitResponse(response);
                     }
                   },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryColor,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
             child: _isSubmitting
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                ? SizedBox(
+                    height: 24,
+                    width: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
                   )
-                : const Text('Share Response'),
+                : Text(
+                    'Share Response',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
           ),
         ),
       ],
@@ -265,79 +386,135 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildResponseSubmittedView() {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        children: [
-          const SizedBox(height: 40),
-          
-          // Success Card
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.check_circle,
-                    size: 64,
-                    color: AppTheme.successColor,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Response Shared!',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: AppTheme.successColor,
-                      fontWeight: FontWeight.w600,
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+        child: Column(
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            
+            // Success Card
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppTheme.successColor.withOpacity(0.1),
+                    AppTheme.successColor.withOpacity(0.05),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: AppTheme.successColor.withOpacity(0.2),
+                  width: 1,
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.06),
+                child: Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
+                      decoration: BoxDecoration(
+                        color: AppTheme.successColor.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.06),
+                      ),
+                      child: Icon(
+                        Icons.check_circle,
+                        size: MediaQuery.of(context).size.width * 0.08,
+                        color: AppTheme.successColor,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Your response:',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppTheme.textSecondaryColor,
+                    
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                    
+                    Text(
+                      'Response Shared!',
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        color: AppTheme.successColor,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppTheme.backgroundColor,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppTheme.borderColor),
+                    
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                    
+                    Text(
+                      'Your response:',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: AppTheme.textSecondaryColor,
+                      ),
                     ),
-                    child: Text(
-                      _userResponse!.response,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                      textAlign: TextAlign.center,
+                    
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+                    
+                    Container(
+                      padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        _userResponse!.response,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          height: 1.3,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          
-          const SizedBox(height: 40),
-          
-          // View Thread Button
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => ThreadFeedScreen(prompt: _todayPrompt!),
+            
+            SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+            
+            // View Thread Button
+            SizedBox(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.06,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ThreadFeedScreen(prompt: _todayPrompt!),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryColor,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                );
-              },
-              child: const Text('View Thread'),
+                ),
+                child: Text(
+                  'View Thread',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
             ),
-          ),
-          
-          const Spacer(),
-          
-          // Time Remaining
-          _buildTimeRemaining(),
-        ],
+            
+            SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+            
+            // Time Remaining
+            _buildTimeRemaining(),
+            
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+          ],
+        ),
       ),
     );
   }
@@ -348,21 +525,43 @@ class _HomeScreenState extends State<HomeScreen> {
     final remaining = endOfDay.difference(now);
     
     return Container(
-      padding: const EdgeInsets.all(16),
+      width: double.infinity,
+      padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
       decoration: BoxDecoration(
-        color: AppTheme.surfaceColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.borderColor),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppTheme.borderColor.withOpacity(0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         children: [
-          Text(
-            'Thread closes in',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: AppTheme.textSecondaryColor,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.access_time,
+                color: AppTheme.primaryColor,
+                size: MediaQuery.of(context).size.width * 0.05,
+              ),
+              SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+              Text(
+                'Thread closes in',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: AppTheme.textSecondaryColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
+          
+          SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+          
           Text(
             '${remaining.inHours}h ${remaining.inMinutes % 60}m',
             style: Theme.of(context).textTheme.displaySmall?.copyWith(
@@ -370,9 +569,13 @@ class _HomeScreenState extends State<HomeScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
+          
+          SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+          
           Text(
-            'New prompt tomorrow at 9:00 AM',
+            _nextPromptTime != null 
+                ? 'Next prompt: ${DateFormat('h:mm a').format(_nextPromptTime!)}'
+                : 'Next prompt: Random time tomorrow',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: AppTheme.textSecondaryColor,
             ),

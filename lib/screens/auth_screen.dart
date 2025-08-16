@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:moodthread/services/auth_service.dart';
+import 'package:moodthread/screens/main_navigation_screen.dart';
 import 'package:moodthread/utils/app_theme.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -48,9 +49,11 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     try {
       final user = await context.read<AuthService>().signInAnonymously();
       if (user != null) {
-        // Navigate to home screen
+        // Navigate to main navigation screen
         if (mounted) {
-          Navigator.of(context).pushReplacementNamed('/home');
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
+          );
         }
       }
     } catch (e) {
@@ -72,17 +75,19 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     setState(() => _isLoading = true);
     
     try {
-      final user = await context.read<AuthService>().signInWithEmail(
-        _loginEmailController.text.trim(),
-        _loginPasswordController.text,
-      );
-      
-      if (user != null) {
-        // Navigate to home screen
-        if (mounted) {
-          Navigator.of(context).pushReplacementNamed('/home');
+              final user = await context.read<AuthService>().signInWithEmail(
+          _loginEmailController.text.trim(),
+          _loginPasswordController.text,
+        );
+        
+        if (user != null) {
+          // Navigate to main navigation screen
+          if (mounted) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
+            );
+          }
         }
-      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -102,18 +107,20 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     setState(() => _isLoading = true);
     
     try {
-      final user = await context.read<AuthService>().signUpWithEmail(
-        _signupEmailController.text.trim(),
-        _signupPasswordController.text,
-        _signupUsernameController.text.trim(),
-      );
-      
-      if (user != null) {
-        // Navigate to home screen
-        if (mounted) {
-          Navigator.of(context).pushReplacementNamed('/home');
+              final user = await context.read<AuthService>().signUpWithEmail(
+          _signupEmailController.text.trim(),
+          _signupPasswordController.text,
+          _signupUsernameController.text.trim(),
+        );
+        
+        if (user != null) {
+          // Navigate to main navigation screen
+          if (mounted) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
+            );
+          }
         }
-      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -132,121 +139,132 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 60),
-              
-              // App Logo and Title
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Icon(
-                  Icons.psychology,
-                  size: 40,
-                  color: Colors.white,
-                ),
-              ),
-              
-              const SizedBox(height: 24),
-              
-              Text(
-                'MoodThread',
-                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                  color: AppTheme.primaryColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              
-              const SizedBox(height: 8),
-              
-              Text(
-                'Share your feelings, once a day',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: AppTheme.textSecondaryColor,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              
-              const SizedBox(height: 60),
-              
-              // Anonymous Login Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: _isLoading ? null : _signInAnonymously,
-                  icon: const Icon(Icons.person_outline),
-                  label: const Text('Continue Anonymously'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.surfaceColor,
-                    foregroundColor: AppTheme.textColor,
-                    side: const BorderSide(color: AppTheme.borderColor),
-                  ),
-                ),
-              ),
-              
-              const SizedBox(height: 24),
-              
-              // Divider
-              Row(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.06),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height - 
+                         MediaQuery.of(context).padding.top - 
+                         MediaQuery.of(context).padding.bottom,
+            ),
+            child: IntrinsicHeight(
+              child: Column(
                 children: [
-                  Expanded(child: Divider(color: AppTheme.borderColor)),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      'or',
-                      style: TextStyle(color: AppTheme.textSecondaryColor),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+                  
+                  // App Logo and Title
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.2,
+                    height: MediaQuery.of(context).size.width * 0.2,
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryColor,
+                      borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.05),
+                    ),
+                    child: Icon(
+                      Icons.psychology,
+                      size: MediaQuery.of(context).size.width * 0.1,
+                      color: Colors.white,
                     ),
                   ),
-                  Expanded(child: Divider(color: AppTheme.borderColor)),
+                  
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  
+                  Text(
+                    'MoodThread',
+                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                      color: AppTheme.primaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.008),
+                  
+                  Text(
+                    'Share your feelings, once a day',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: AppTheme.textSecondaryColor,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+                  
+                  // Anonymous Login Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: _isLoading ? null : _signInAnonymously,
+                      icon: const Icon(Icons.person_outline),
+                      label: const Text('Continue Anonymously'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.surfaceColor,
+                        foregroundColor: AppTheme.textColor,
+                        side: const BorderSide(color: AppTheme.borderColor),
+                      ),
+                    ),
+                  ),
+                  
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  
+                  // Divider
+                  Row(
+                    children: [
+                      Expanded(child: Divider(color: AppTheme.borderColor)),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.04),
+                        child: Text(
+                          'or',
+                          style: TextStyle(color: AppTheme.textSecondaryColor),
+                        ),
+                      ),
+                      Expanded(child: Divider(color: AppTheme.borderColor)),
+                    ],
+                  ),
+                  
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  
+                  // Tab Bar
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.surfaceColor,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppTheme.borderColor),
+                    ),
+                    child: TabBar(
+                      controller: _tabController,
+                      indicator: BoxDecoration(
+                        color: AppTheme.primaryColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      labelColor: Colors.white,
+                      unselectedLabelColor: AppTheme.textColor,
+                      tabs: const [
+                        Tab(text: 'Sign In'),
+                        Tab(text: 'Sign Up'),
+                      ],
+                    ),
+                  ),
+                  
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  
+                  // Tab Views
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        // Sign In Tab
+                        _buildSignInForm(),
+                        
+                        // Sign Up Tab
+                        _buildSignUpForm(),
+                      ],
+                    ),
+                  ),
+                  
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                 ],
               ),
-              
-              const SizedBox(height: 24),
-              
-              // Tab Bar
-              Container(
-                decoration: BoxDecoration(
-                  color: AppTheme.surfaceColor,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppTheme.borderColor),
-                ),
-                child: TabBar(
-                  controller: _tabController,
-                  indicator: BoxDecoration(
-                    color: AppTheme.primaryColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  labelColor: Colors.white,
-                  unselectedLabelColor: AppTheme.textColor,
-                  tabs: const [
-                    Tab(text: 'Sign In'),
-                    Tab(text: 'Sign Up'),
-                  ],
-                ),
-              ),
-              
-              const SizedBox(height: 24),
-              
-              // Tab Views
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    // Sign In Tab
-                    _buildSignInForm(),
-                    
-                    // Sign Up Tab
-                    _buildSignUpForm(),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -276,7 +294,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             },
           ),
           
-          const SizedBox(height: 16),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.015),
           
           TextFormField(
             controller: _loginPasswordController,
@@ -296,7 +314,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             },
           ),
           
-          const SizedBox(height: 24),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
           
           SizedBox(
             width: double.infinity,
@@ -338,7 +356,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             },
           ),
           
-          const SizedBox(height: 16),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.015),
           
           TextFormField(
             controller: _signupEmailController,
@@ -358,7 +376,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             },
           ),
           
-          const SizedBox(height: 16),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.015),
           
           TextFormField(
             controller: _signupPasswordController,
@@ -378,7 +396,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             },
           ),
           
-          const SizedBox(height: 24),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
           
           SizedBox(
             width: double.infinity,

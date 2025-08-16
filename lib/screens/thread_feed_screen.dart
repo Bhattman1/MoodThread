@@ -42,24 +42,26 @@ class _ThreadFeedScreenState extends State<ThreadFeedScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Prompt Header
-          _buildPromptHeader(),
-          
-          // Thread Feed
-          Expanded(
-            child: _buildThreadFeed(),
-          ),
-        ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Prompt Header
+            _buildPromptHeader(),
+            
+            // Thread Feed
+            Expanded(
+              child: _buildThreadFeed(),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildPromptHeader() {
     return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(20),
+      margin: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
+      padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
       decoration: BoxDecoration(
         color: AppTheme.surfaceColor,
         borderRadius: BorderRadius.circular(16),
@@ -70,7 +72,7 @@ class _ThreadFeedScreenState extends State<ThreadFeedScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
                 decoration: BoxDecoration(
                   color: AppTheme.primaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -78,10 +80,10 @@ class _ThreadFeedScreenState extends State<ThreadFeedScreen> {
                 child: Icon(
                   Icons.psychology,
                   color: AppTheme.primaryColor,
-                  size: 24,
+                  size: MediaQuery.of(context).size.width * 0.06,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: MediaQuery.of(context).size.width * 0.03),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,6 +94,7 @@ class _ThreadFeedScreenState extends State<ThreadFeedScreen> {
                         color: AppTheme.textSecondaryColor,
                       ),
                     ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.005),
                     Text(
                       widget.prompt.text,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -103,20 +106,25 @@ class _ThreadFeedScreenState extends State<ThreadFeedScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.015),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '${widget.prompt.responseCount} responses',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppTheme.textSecondaryColor,
+              Expanded(
+                child: Text(
+                  '${widget.prompt.responseCount} responses',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppTheme.textSecondaryColor,
+                  ),
                 ),
               ),
-              Text(
-                'Thread closes at 11:59 PM',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppTheme.textSecondaryColor,
+              Expanded(
+                child: Text(
+                  'Thread closes at 11:59 PM',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppTheme.textSecondaryColor,
+                  ),
+                  textAlign: TextAlign.end,
                 ),
               ),
             ],
@@ -136,27 +144,32 @@ class _ThreadFeedScreenState extends State<ThreadFeedScreen> {
         
         if (snapshot.hasError) {
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 64,
-                  color: AppTheme.errorColor,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Error loading thread',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Please try again later',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: AppTheme.textSecondaryColor,
+            child: Padding(
+              padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: MediaQuery.of(context).size.width * 0.15,
+                    color: AppTheme.errorColor,
                   ),
-                ),
-              ],
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+                  Text(
+                    'Error loading thread',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.008),
+                  Text(
+                    'Please try again later',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: AppTheme.textSecondaryColor,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           );
         }
@@ -165,34 +178,38 @@ class _ThreadFeedScreenState extends State<ThreadFeedScreen> {
         
         if (responses.isEmpty) {
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.chat_bubble_outline,
-                  size: 64,
-                  color: AppTheme.textSecondaryColor,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'No responses yet',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Be the first to share how you feel',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            child: Padding(
+              padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.chat_bubble_outline,
+                    size: MediaQuery.of(context).size.width * 0.15,
                     color: AppTheme.textSecondaryColor,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+                  Text(
+                    'No responses yet',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.008),
+                  Text(
+                    'Be the first to share how you feel',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: AppTheme.textSecondaryColor,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           );
         }
         
         return ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.04),
           itemCount: responses.length,
           itemBuilder: (context, index) {
             final response = responses[index];
@@ -207,9 +224,9 @@ class _ThreadFeedScreenState extends State<ThreadFeedScreen> {
     final timeAgo = _getTimeAgo(response.createdAt);
     
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.01),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -218,11 +235,11 @@ class _ThreadFeedScreenState extends State<ThreadFeedScreen> {
               children: [
                 // Avatar
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: MediaQuery.of(context).size.width * 0.1,
+                  height: MediaQuery.of(context).size.width * 0.1,
                   decoration: BoxDecoration(
                     color: AppTheme.primaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.05),
                   ),
                   child: Center(
                     child: Text(
@@ -230,13 +247,13 @@ class _ThreadFeedScreenState extends State<ThreadFeedScreen> {
                       style: TextStyle(
                         color: AppTheme.primaryColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: MediaQuery.of(context).size.width * 0.04,
                       ),
                     ),
                   ),
                 ),
                 
-                const SizedBox(width: 12),
+                SizedBox(width: MediaQuery.of(context).size.width * 0.03),
                 
                 // User Info
                 Expanded(
@@ -268,25 +285,28 @@ class _ThreadFeedScreenState extends State<ThreadFeedScreen> {
                   },
                   icon: Icon(
                     Icons.favorite_border,
-                    size: 20,
+                    size: MediaQuery.of(context).size.width * 0.05,
                     color: AppTheme.textSecondaryColor,
                   ),
                   label: Text(
                     '${response.sameCount}',
                     style: TextStyle(
                       color: AppTheme.textSecondaryColor,
-                      fontSize: 12,
+                      fontSize: MediaQuery.of(context).size.width * 0.03,
                     ),
                   ),
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.02,
+                      vertical: MediaQuery.of(context).size.height * 0.005,
+                    ),
                     minimumSize: const Size(0, 0),
                   ),
                 ),
               ],
             ),
             
-            const SizedBox(height: 12),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.012),
             
             // Response Text
             Text(
@@ -296,27 +316,30 @@ class _ThreadFeedScreenState extends State<ThreadFeedScreen> {
               ),
             ),
             
-            const SizedBox(height: 8),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.008),
             
             // Response Footer
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Response #${index + 1}',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppTheme.textSecondaryColor,
+                Expanded(
+                  child: Text(
+                    'Response #${index + 1}',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppTheme.textSecondaryColor,
+                    ),
                   ),
                 ),
                 if (response.isAnonymous)
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
                         Icons.visibility_off,
-                        size: 16,
+                        size: MediaQuery.of(context).size.width * 0.04,
                         color: AppTheme.textSecondaryColor,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                       Text(
                         'Anonymous',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(

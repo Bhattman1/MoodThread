@@ -41,6 +41,9 @@ class AppTheme {
           fontWeight: FontWeight.w600,
           color: textColor,
         ),
+        // Mobile-optimized app bar
+        toolbarHeight: 56.0,
+        scrolledUnderElevation: 0,
       ),
       
       // Card Theme
@@ -70,8 +73,11 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: primaryColor, width: 2),
         ),
+        // Mobile-optimized input padding
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         hintStyle: const TextStyle(color: textSecondaryColor),
+        // Ensure touch targets are at least 48x48
+        isDense: false,
       ),
       
       // Elevated Button Theme
@@ -80,7 +86,10 @@ class AppTheme {
           backgroundColor: primaryColor,
           foregroundColor: Colors.white,
           elevation: 0,
+          // Mobile-optimized button padding
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          // Ensure minimum touch target size
+          minimumSize: const Size(88, 48),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -95,10 +104,22 @@ class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: primaryColor,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          // Mobile-optimized padding
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          // Ensure minimum touch target size
+          minimumSize: const Size(88, 48),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
+        ),
+      ),
+      
+      // Icon Button Theme
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          // Ensure minimum touch target size for icons
+          minimumSize: const Size(48, 48),
+          padding: const EdgeInsets.all(12),
         ),
       ),
       
@@ -153,6 +174,32 @@ class AppTheme {
       
       // Scaffold Background
       scaffoldBackgroundColor: backgroundColor,
+      
+      // Mobile-optimized scrollbar
+      scrollbarTheme: ScrollbarThemeData(
+        thumbColor: MaterialStateProperty.all(primaryColor.withOpacity(0.3)),
+        trackColor: MaterialStateProperty.all(borderColor.withOpacity(0.1)),
+        thickness: MaterialStateProperty.all(6.0),
+        radius: const Radius.circular(3.0),
+      ),
+      
+      // Mobile-optimized divider
+      dividerTheme: const DividerThemeData(
+        color: borderColor,
+        thickness: 1.0,
+        space: 1.0,
+      ),
+      
+      // Mobile-optimized bottom navigation bar
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: surfaceColor,
+        selectedItemColor: primaryColor,
+        unselectedItemColor: textSecondaryColor,
+        type: BottomNavigationBarType.fixed,
+        elevation: 8,
+        selectedLabelStyle: TextStyle(fontSize: 12),
+        unselectedLabelStyle: TextStyle(fontSize: 12),
+      ),
     );
   }
 }
